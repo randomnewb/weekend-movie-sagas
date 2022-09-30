@@ -3,13 +3,10 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const Details = () => {
-    // We'll use sagas to dispatch our "FETCH_MOVIES"
-    const dispatch = useDispatch();
     const movies = useSelector((store) => store.movies);
 
-    // dispatch/sagas axios GET request goes here
-
-    // could add useEffect here to show items on page load
+    // could add useEffect here to show items on page load? or use reducers?
+    // maybe use Route and '/movie/id'
 
     // need to rewrite this to only show clicked on movie (probably via its ID in database)
     return (

@@ -13,6 +13,12 @@ function MovieList() {
         dispatch({ type: "FETCH_MOVIES" });
     }, []);
 
+    const handleDetail = (movie) => {
+        console.log(movie);
+        dispatch({ type: "FETCH_MOVIE", payload: movie });
+        history.push("/detail");
+    };
+
     return (
         <main>
             <h1>MovieList</h1>
@@ -24,7 +30,7 @@ function MovieList() {
                             <img
                                 src={movie.poster}
                                 alt={movie.title}
-                                onClick={() => history.push("/detail")}
+                                onClick={(e) => handleDetail(movie)}
                             />
                         </div>
                     );
