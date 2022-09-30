@@ -1,8 +1,10 @@
 import { React } from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Details = () => {
+    const history = useHistory();
     const movies = useSelector((store) => store.movies);
 
     // could add useEffect here to show items on page load? or use reducers?
@@ -11,16 +13,15 @@ const Details = () => {
     // need to rewrite this to only show clicked on movie (probably via its ID in database)
     return (
         <div>
-            <ul>
-                {movies.map((movie) => (
-                    <li key={movie.id}>
-                        {movie.id}
-                        {movie.title}
-                        {movie.poster}
-                        {movie.description}
-                    </li>
-                ))}
-            </ul>
+            {movies.map((movie) => (
+                <div key={movie.id}>
+                    <h2>{movie.title}</h2>
+
+                    <img src={movie.poster}></img>
+                    <h3>{movie.description}</h3>
+                </div>
+            ))}
+            <button onClick={() => history.go(-1)}> Back to Movies List</button>
         </div>
     );
 };
