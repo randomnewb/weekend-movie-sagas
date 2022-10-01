@@ -22,6 +22,7 @@ const Details = () => {
                     <h3>{movie.description}</h3>
                 </div>
             ))}
+            <h2> Genres</h2>
             {genres.map((genre) => (
                 <ul key={genre.id}>
                     <li>{genre.name}</li>

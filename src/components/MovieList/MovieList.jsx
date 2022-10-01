@@ -16,7 +16,7 @@ function MovieList() {
     const handleDetail = (movie) => {
         console.log(movie);
         dispatch({ type: "FETCH_MOVIE", payload: movie });
-        dispatch({ type: "FETCH_GENRES" });
+        dispatch({ type: "FETCH_GENRE", payload: movie });
         history.push("/detail");
     };
 

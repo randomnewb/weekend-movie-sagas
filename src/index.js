@@ -16,6 +16,7 @@ function* rootSaga() {
     yield takeEvery("FETCH_MOVIES", fetchAllMovies);
     yield takeEvery("FETCH_MOVIE", fetchMovieDetail);
     yield takeEvery("FETCH_GENRES", fetchAllGenres);
+    yield takeEvery("FETCH_GENRE", fetchGenreDetail);
 }
 
 function* fetchAllMovies() {
@@ -55,6 +56,20 @@ function* fetchAllGenres() {
     }
 }
 
+function* fetchGenreDetail(action) {
+    try {
+        // console.log(action);
+        const genre = yield axios.get(`/api/genre/${action.payload.id}`);
+        yield put({
+            type: "SET_GENRE",
+            payload: genre.data,
+        });
+    } catch (error) {
+        console.log("Error getting specific genres", error);
+        alert("Something went wrong");
+    }
+}
+
 // Create sagaMiddleware
 const sagaMiddleware = createSagaMiddleware();
 
@@ -74,6 +89,8 @@ const movies = (state = [], action) => {
 const genres = (state = [], action) => {
     switch (action.type) {
         case "SET_GENRES":
+            return action.payload;
+        case "SET_GENRE":
             return action.payload;
         default:
             return state;
