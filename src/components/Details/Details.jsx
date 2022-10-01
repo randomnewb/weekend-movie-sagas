@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 const Details = () => {
     const history = useHistory();
     const movies = useSelector((store) => store.movies);
+    const genres = useSelector((store) => store.genres);
 
     // could add useEffect here to show items on page load? or use reducers?
     // maybe use Route and '/movie/id'
@@ -20,6 +21,11 @@ const Details = () => {
                     <img src={movie.poster}></img>
                     <h3>{movie.description}</h3>
                 </div>
+            ))}
+            {genres.map((genre) => (
+                <ul key={genre.id}>
+                    <li>{genre.name}</li>
+                </ul>
             ))}
             <button onClick={() => history.go(-1)}> Back to Movies List</button>
         </div>
