@@ -17,6 +17,7 @@ function* rootSaga() {
     yield takeEvery("FETCH_MOVIE", fetchMovieDetail);
     yield takeEvery("FETCH_GENRES", fetchAllGenres);
     yield takeEvery("FETCH_GENRE", fetchGenreDetail);
+    yield takeEvery("POST_MOVIE", postMovie);
 }
 
 function* fetchAllMovies() {
@@ -66,6 +67,18 @@ function* fetchGenreDetail(action) {
         });
     } catch (error) {
         console.log("Error getting specific genres", error);
+        alert("Something went wrong");
+    }
+}
+
+function* postMovie(action) {
+    try {
+        yield axios.post("/api/movie", action.payload);
+        yield put({
+            type: "FETCH_MOVIES",
+        });
+    } catch (error) {
+        console.log("Error posting movie", error);
         alert("Something went wrong");
     }
 }
