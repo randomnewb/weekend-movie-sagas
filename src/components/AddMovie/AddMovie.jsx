@@ -12,18 +12,21 @@ const AddMovie = () => {
         title: "",
         poster: "",
         description: "",
-        genre_id: [],
     });
+
+    //Setter/getter for genre_id
+    const [genre_id, setGenres] = useState([]);
 
     //This handles the 'final' submission where we will
     //Add the movie via a dispatch (POST_MOVIE)
     //Then, return the user back to the movie list page
     const newMovieHandler = (e) => {
         e.preventDefault();
-        console.log("Adding new movie", movie);
+        console.log("Adding new movie", movie, genre_id);
         dispatch({
             type: "POST_MOVIE",
-            payload: movie,
+            //sending this payload as an object with movie and genre_id... it will cause problems later on in the server
+            payload: { movie, genre_id },
         });
         history.push("/");
     };
@@ -43,6 +46,32 @@ const AddMovie = () => {
             //Key/Value pair
             [name]: value,
         }));
+    };
+    const options = [
+        { value: "1", label: "Adventure" },
+        { value: "2", label: "Animated" },
+        { value: "3", label: "Biographical" },
+        { value: "4", label: "Comedy" },
+        { value: "5", label: "Disaster" },
+        { value: "6", label: "Drama" },
+        { value: "7", label: "Epic" },
+        { value: "8", label: "Fantasy" },
+        { value: "9", label: "Musical" },
+        { value: "10", label: "Romantic" },
+        { value: "11", label: "Science Fiction" },
+        { value: "12", label: "Space-Opera" },
+        { value: "13", label: "Superhero" },
+    ];
+
+    // How to handle and update 'multiple select' in React?
+    // https://stackoverflow.com/questions/61671034/how-to-correctly-update-select-multiple-in-react
+    // Great solution and the code sample was very helpful
+    const handleGenres = (e) => {
+        const genre_id = [...e.target.options]
+            .filter((option) => option.selected)
+            .map((x) => parseInt(x.value));
+        console.log("Selected genres are", genre_id);
+        setGenres({ genre_id });
     };
 
     return (
@@ -72,34 +101,31 @@ const AddMovie = () => {
                     onChange={handleMovieFields}></input>
                 <br />
                 <label> Description</label>
-                <input
+                <textarea
                     required
                     type="text"
                     placeholder="Description"
                     name="description"
                     value={movie.description}
-                    onChange={handleMovieFields}></input>
+                    onChange={handleMovieFields}></textarea>
                 <br />
                 <label> Add one or more genres</label>
                 <br />
                 <select
                     multiple
                     name="genre_id"
-                    value={movie.genre_id}
-                    onChange={handleMovieFields}>
-                    <option value="1"> Adventure </option>
-                    <option value="2"> Animated </option>
-                    <option value="3"> Biographical </option>
-                    <option value="4"> Comedy </option>
-                    <option value="5"> Disaster </option>
-                    <option value="6"> Drama </option>
-                    <option value="7"> Epic </option>
-                    <option value="8"> Fantasy </option>
-                    <option value="9"> Musical </option>
-                    <option value="10"> Romantic </option>
-                    <option value="11"> Science Fiction</option>
-                    <option value="12"> Space-Opera </option>
-                    <option value="13"> Superhero</option>
+                    value={genre_id.genre_id}
+                    options={options}
+                    onChange={handleGenres}>
+                    {options.map((item) => {
+                        return (
+                            <option
+                                key={item.value}
+                                value={item.value}>
+                                {item.label}
+                            </option>
+                        );
+                    })}
                 </select>
                 <br />
                 <br />

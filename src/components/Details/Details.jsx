@@ -1,5 +1,4 @@
 import { React } from "react";
-import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -7,11 +6,6 @@ const Details = () => {
     const history = useHistory();
     const movies = useSelector((store) => store.movies);
     const genres = useSelector((store) => store.genres);
-
-    // could add useEffect here to show items on page load? or use reducers?
-    // maybe use Route and '/movie/id'
-
-    // need to rewrite this to only show clicked on movie (probably via its ID in database)
     return (
         <div>
             {movies.map((movie) => (

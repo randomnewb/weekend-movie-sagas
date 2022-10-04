@@ -31,13 +31,22 @@ router.get("/:id", (req, res) => {
         });
 });
 router.post("/", (req, res) => {
+    // Because our payload of movies.data was an object with a
+    // movies and and genre_id property (of which had some of its own properties or an array)
+    // we need to 'convert' it to something that matches the SQL queries and the database columns
+    req.body.title = req.body.movie.title;
+    req.body.poster = req.body.movie.poster;
+    req.body.description = req.body.movie.description;
+    req.body.genre_id = req.body.genre_id.genre_id;
+    // Get rid of the objects for good measure now that we have set them to req.body itself
+    delete req.body.genre_id.genre_id;
+    delete req.body.movie;
     console.log(req.body);
     // RETURNING "id" will give us back the id of the created movie
     const insertMovieQuery = `
   INSERT INTO "movies" ("title", "poster", "description")
   VALUES ($1, $2, $3)
   RETURNING "id";`;
-
     // FIRST QUERY MAKES MOVIE
     pool.query(insertMovieQuery, [
         req.body.title,
@@ -45,31 +54,33 @@ router.post("/", (req, res) => {
         req.body.description,
     ])
         .then((result) => {
-            console.log("New Movie Id:", result.rows[0].id); //ID IS HERE!
+            console.log("New Movie Id:", result.rows[0].id, req.body); //ID IS HERE!
 
             const createdMovieId = result.rows[0].id;
-
             // Now handle the genre reference
             const insertMovieGenreQuery = `
-      INSERT INTO "movies_genres" ("movie_id", "genre_id")
-      VALUES  ($1, $2);
-      `;
-            // SECOND QUERY ADDS GENRE FOR THAT NEW MOVIE
-            pool.query(insertMovieGenreQuery, [
-                createdMovieId,
-                req.body.genre_id,
-            ])
-                .then((result) => {
-                    //Now that both are done, send back success!
-                    res.sendStatus(201);
-                })
-                .catch((err) => {
-                    // catch for second query
-                    console.log(err);
-                    res.sendStatus(500);
-                });
-
+            INSERT INTO "movies_genres" ("movie_id", "genre_id")
+            VALUES  ($1, $2);
+            `;
+            // req.body.genre_id is an array of all the selected genre_ids
+            // iterate through each one, sending our query above until
+            // we have an entry for each genre_id
+            for (let i = 0; req.body.genre_id.length > i; i++) {
+                // SECOND QUERY ADDS GENRE FOR THAT NEW MOVIE
+                pool.query(insertMovieGenreQuery, [
+                    createdMovieId,
+                    // Be sure to add the [i] as we are going entry by entry because of the array/for loop
+                    req.body.genre_id[i],
+                ]);
+            }
             // Catch for first query
+            // Did you know you can't send multiple 'res' or responses for a single request?
+            // Moving these outside of the loop and sending the response after it was all done
+            // fixed the server crashing :)
+        })
+        .then((result) => {
+            //Now that both are done, send back success!
+            res.sendStatus(201);
         })
         .catch((err) => {
             console.log(err);
